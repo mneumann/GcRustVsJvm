@@ -21,23 +21,20 @@ struct Employee {
     salary: u64,
 }
 
-fn create_random_string_of_80_chars(char_pool: &[char]) -> String {
-    let mut thread_rng = thread_rng();
-    let mut rng = SmallRng::from_rng(&mut thread_rng).unwrap();
-
-    char_pool.choose_multiple(&mut rng, 80).collect()
+fn create_random_string_of_80_chars<R: Rng>(rng: &mut R, char_pool: &[char]) -> String {
+    char_pool.choose_multiple(rng, 80).collect()
 }
 
-fn create_random_employee(char_pool: &[char]) -> Employee {
+fn create_random_employee<R: Rng>(rng: &mut R, char_pool: &[char]) -> Employee {
     return Employee {
-        first_name: create_random_string_of_80_chars(char_pool),
-        last_name: create_random_string_of_80_chars(char_pool),
+        first_name: create_random_string_of_80_chars(rng, char_pool),
+        last_name: create_random_string_of_80_chars(rng, char_pool),
         address: Address
         {
-            street: create_random_string_of_80_chars(char_pool),
-            postal_code: create_random_string_of_80_chars(char_pool),
-            city: create_random_string_of_80_chars(char_pool),
-            country: create_random_string_of_80_chars(char_pool),
+            street: create_random_string_of_80_chars(rng, char_pool),
+            postal_code: create_random_string_of_80_chars(rng, char_pool),
+            city: create_random_string_of_80_chars(rng, char_pool),
+            country: create_random_string_of_80_chars(rng, char_pool),
         },
         salary: 1000,
     };
@@ -45,9 +42,12 @@ fn create_random_employee(char_pool: &[char]) -> Employee {
 
 fn lookup_all_employees<'a>(number_of_all_employees: u64, char_pool: &'a [char])
                             -> impl Iterator<Item=Employee> + 'a {
+    let mut thread_rng = thread_rng();
+    let mut rng = SmallRng::from_rng(&mut thread_rng).unwrap();
+
     return
         (0..number_of_all_employees)
-            .map(move |_| { return create_random_employee(char_pool); })
+            .map(move |_| { create_random_employee(&mut rng, char_pool) })
             .into_iter();
 }
 
