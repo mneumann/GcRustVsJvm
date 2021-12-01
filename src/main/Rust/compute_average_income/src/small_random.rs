@@ -22,7 +22,7 @@ struct Employee {
 }
 
 fn create_random_string_of_80_chars<R: Rng>(rng: &mut R, char_pool: &[char]) -> String {
-    char_pool.choose_multiple(rng, 80).collect()
+    (0..80).map(|_| char_pool.choose(rng).unwrap()).collect()
 }
 
 fn create_random_employee<R: Rng>(rng: &mut R, char_pool: &[char]) -> Employee {
