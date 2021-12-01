@@ -39,13 +39,9 @@ fn create_random_employee(rng: &mut Rng, char_pool: &[char]) -> Employee {
     }
 }
 
-fn lookup_all_employees<'a>(number_of_all_employees: usize, char_pool: &'a [char])
+fn lookup_all_employees<'a>(rng: &'a mut Rng, number_of_all_employees: usize, char_pool: &'a [char])
                             -> impl Iterator<Item=Employee> + 'a {
-
-    let mut rng = fastrand::Rng::new();
-
-        (0..number_of_all_employees)
-            .map(move |_| { create_random_employee(&mut rng, char_pool) })
+        repeat_with(move || create_random_employee(rng, char_pool)).take(number_of_all_employees)
 }
 
 fn compute_average_income_of_all_employees(employees: impl Iterator<Item=Employee>)
@@ -58,18 +54,19 @@ fn compute_average_income_of_all_employees(employees: impl Iterator<Item=Employe
 }
 
 pub fn benchmark() {
-    println!("Benchmarking small random number generator");
+    println!("Benchmarking fast random number generator");
     let char_pool: Vec<_> =
         ('a'..'z')
             .chain('A'..'Z')
             .chain('0'..'9')
             .collect();
 
+    let mut rng = fastrand::Rng::new();
 
     let nrs_of_employees = [1000, 10000, 100000, 1000000];
     for &nr_of_employees in &nrs_of_employees {
         let start_time = Instant::now();
-        let average = compute_average_income_of_all_employees(lookup_all_employees(
+        let average = compute_average_income_of_all_employees(lookup_all_employees(&mut rng,
             nr_of_employees, &char_pool[..],
         ));
         let end_time = Instant::now();
