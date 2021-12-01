@@ -19,7 +19,7 @@ struct Employee {
     salary: u64,
 }
 
-fn create_random_string_of_80_chars(char_pool: &Vec<char>) -> String {
+fn create_random_string_of_80_chars(char_pool: &[char]) -> String {
     let mut thread_rng = thread_rng();
     let mut rng = SmallRng::from_rng(&mut thread_rng).unwrap();
 
@@ -31,7 +31,7 @@ fn create_random_string_of_80_chars(char_pool: &Vec<char>) -> String {
         .into_iter().collect();
 }
 
-fn create_random_employee(char_pool: &Vec<char>) -> Employee {
+fn create_random_employee(char_pool: &[char]) -> Employee {
     return Employee {
         first_name: create_random_string_of_80_chars(char_pool),
         last_name: create_random_string_of_80_chars(char_pool),
@@ -46,7 +46,7 @@ fn create_random_employee(char_pool: &Vec<char>) -> Employee {
     };
 }
 
-fn lookup_all_employees<'a>(number_of_all_employees: u64, char_pool: &'a Vec<char>)
+fn lookup_all_employees<'a>(number_of_all_employees: u64, char_pool: &'a [char])
                             -> impl Iterator<Item=Employee> + 'a {
     return
         (0..number_of_all_employees)
@@ -77,7 +77,7 @@ pub fn benchmark() {
     for nr_of_employees in &nrs_of_employees {
         let start_time = Instant::now();
         let average = compute_average_income_of_all_employees(lookup_all_employees(
-            *nr_of_employees, &char_pool,
+            *nr_of_employees, &char_pool[..],
         ));
         let end_time = Instant::now();
         let duration = end_time.duration_since(start_time);
