@@ -1,6 +1,8 @@
 use rand::{SeedableRng, thread_rng, Rng};
 use rand::rngs::SmallRng;
+use rand::seq::SliceRandom;
 use std::time::{Instant};
+
 
 
 #[derive(Debug)]
@@ -23,12 +25,7 @@ fn create_random_string_of_80_chars(char_pool: &[char]) -> String {
     let mut thread_rng = thread_rng();
     let mut rng = SmallRng::from_rng(&mut thread_rng).unwrap();
 
-    return (0..80)
-        .map(|_| {
-            let index = rng.gen_range(0, char_pool.len());
-            char_pool[index]
-        })
-        .into_iter().collect();
+    char_pool.choose_multiple(&mut rng, 80).collect()
 }
 
 fn create_random_employee(char_pool: &[char]) -> Employee {
