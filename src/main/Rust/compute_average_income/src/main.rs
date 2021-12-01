@@ -1,7 +1,7 @@
-mod randy_random;
-mod standard_random;
-mod small_random;
 mod fast_rand;
+mod randy_random;
+mod small_random;
+mod standard_random;
 
 fn main() {
     standard_random::benchmark();

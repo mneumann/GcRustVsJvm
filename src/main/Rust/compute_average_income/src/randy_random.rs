@@ -1,6 +1,6 @@
 use std::time::Instant;
 
-use rand::{distributions::Uniform, Rng, RngCore, rngs::SmallRng, SeedableRng};
+use rand::{distributions::Uniform, rngs::SmallRng, Rng, RngCore, SeedableRng};
 
 #[derive(Debug)]
 struct Address {
@@ -26,11 +26,7 @@ struct RandyRandom {
 
 impl RandyRandom {
     fn new(rng: Box<dyn RngCore>) -> RandyRandom {
-        let pool: Vec<_> =
-            ('a'..'z')
-                .chain('A'..'Z')
-                .chain('0'..'9')
-                .collect();
+        let pool: Vec<_> = ('a'..'z').chain('A'..'Z').chain('0'..'9').collect();
 
         let dist = Uniform::from(0..pool.len());
         RandyRandom { rng, pool, dist }
@@ -60,11 +56,11 @@ impl RandyRandom {
 fn lookup_all_employees(
     number_of_all_employees: u64,
     r: &mut RandyRandom,
-) -> impl Iterator<Item=Employee> + '_ {
+) -> impl Iterator<Item = Employee> + '_ {
     (0..number_of_all_employees).map(move |_| r.create_random_employee())
 }
 
-fn compute_average_income_of_all_employees(employees: impl Iterator<Item=Employee>) -> f64 {
+fn compute_average_income_of_all_employees(employees: impl Iterator<Item = Employee>) -> f64 {
     let (num_of_employees, sum_of_salaries) = employees
         .fold((0u64, 0u64), |(counter, sum), employee| {
             (counter + 1, sum + employee.salary)
@@ -91,4 +87,3 @@ pub fn benchmark() {
     }
     println!();
 }
-
